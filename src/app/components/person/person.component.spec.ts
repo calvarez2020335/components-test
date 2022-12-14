@@ -11,9 +11,9 @@ fdescribe('PersonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PersonComponent ]
+      declarations: [PersonComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -31,7 +31,7 @@ fdescribe('PersonComponent', () => {
     component.person = new Person('Nicolas', 'Molina', 28, 89, 1.4);
     expect(component.person.name).toEqual('Nicolas');
   })
-  
+
   it('should have <h3> with "Hola, ${person.name}"', () => {
 
     //ARRANGE
@@ -48,9 +48,9 @@ fdescribe('PersonComponent', () => {
   })
 
   it('should have <p> with "Mi altura es ${person.height}"', () => {
-    component.person = new Person('Carlos' , 'Molina', 28, 89, 1.4);
+    component.person = new Person('Carlos', 'Molina', 28, 89, 1.4);
     const expectMessage = `Mi altura es ${component.person.height}`
-    const personDebug: DebugElement = fixture.debugElement; 
+    const personDebug: DebugElement = fixture.debugElement;
     const pDebug: DebugElement = personDebug.query(By.css('p'));
     const pElement: HTMLElement = pDebug.nativeElement;
 
@@ -63,7 +63,7 @@ fdescribe('PersonComponent', () => {
 
     //Arrange
     const expectMessage = `overweight level 3`
-    component.person = new Person('Juan' , 'Molina', 30, 120, 1.65);
+    component.person = new Person('Juan', 'Molina', 30, 120, 1.65);
     const button = fixture.debugElement.query(By.css('button.btn-imc')).nativeElement;
     //Act
     component.calcIMC();
@@ -76,7 +76,7 @@ fdescribe('PersonComponent', () => {
 
     //Arrange
     const expectMessage = `overweight level 3`
-    component.person = new Person('Juan' , 'Molina', 30, 120, 1.65);
+    component.person = new Person('Juan', 'Molina', 30, 120, 1.65);
     const buttonDe = fixture.debugElement.query(By.css('button.btn-imc'));
     const buttonEl = buttonDe.nativeElement;
     //Act
@@ -84,6 +84,23 @@ fdescribe('PersonComponent', () => {
     fixture.detectChanges();
     //Assert
     expect(buttonEl.textContent).toContain(expectMessage)
+  })
+
+  it('should raise selected event when do click', () => {
+    //Arrange
+    const expectPerson = new Person('Juan', 'Molina', 30, 120, 1.65);
+    component.person = expectPerson;
+    const buttonDe = fixture.debugElement.query(By.css('button.btn-choose'))
+
+    let selectedPerson: Person | null;
+    component.onSelected.subscribe(person => selectedPerson = person)
+    //Act
+    buttonDe.triggerEventHandler('click', null);
+    fixture.detectChanges();
+    //Assert
+    expect(selectedPerson!).toEqual(expectPerson)
+
+
   })
 
 });
