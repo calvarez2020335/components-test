@@ -5,20 +5,24 @@ import { ProductsService } from 'src/app/services/product.service';
 import { ProductComponent } from '../product/product.component';
 
 import { ProductsComponent } from './products.component';
+import { ValueService } from '../../services/value.service';
 
 fdescribe('ProductsComponent', () => {
   let component: ProductsComponent;
   let fixture: ComponentFixture<ProductsComponent>;
   let productService: jasmine.SpyObj<ProductsService>
+  let valueService: jasmine.SpyObj<ValueService>
 
   beforeEach(async () => {
 
     const productServiceSpy = jasmine.createSpyObj('ProductsService', ['getAll'])
+    const valueServiceSpy = jasmine.createSpyObj('ValueService', ['getPromiseValue'])
 
     await TestBed.configureTestingModule({
       declarations: [ProductsComponent, ProductComponent],
       providers: [
-        { provide: ProductsService, useValue: productServiceSpy }
+        { provide: ProductsService, useValue: productServiceSpy },
+        { provide: ValueService, useValue: valueServiceSpy}
       ]
     })
       .compileComponents();
@@ -28,6 +32,8 @@ fdescribe('ProductsComponent', () => {
     fixture = TestBed.createComponent(ProductsComponent);
     component = fixture.componentInstance;
     productService = TestBed.inject(ProductsService) as jasmine.SpyObj<ProductsService>
+    valueService = TestBed.inject(ValueService) as jasmine.SpyObj<ValueService>
+
     const productsMock = generateManyProducts(3);
     productService.getAll.and.returnValue(of(productsMock))
     fixture.detectChanges(); //Aqui se ejecuta el ngOnint
@@ -84,6 +90,27 @@ fdescribe('ProductsComponent', () => {
       //Assert
       expect(component.status).toEqual('error');
     }))
+
+  })
+
+  describe('test for callPromise', () => {
+
+    it('should call to promise', async () => {
+
+      //Arrange
+      const mockMsg = 'My mock string';
+      valueService.getPromiseValue.and.returnValue(Promise.resolve(mockMsg));
+
+      //Act
+
+      await component.callPromise();
+      fixture.detectChanges();
+
+      //assert
+      expect(component.rta).toEqual(mockMsg);
+      expect(valueService.getPromiseValue).toHaveBeenCalled();
+
+    })
 
   })
 
