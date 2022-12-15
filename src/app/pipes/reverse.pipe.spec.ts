@@ -36,7 +36,7 @@ class HostComponent {
   text: string = '';
 }
 
-fdescribe('ReversePipe from HostComponent', () => {
+describe('ReversePipe from HostComponent', () => {
 
   let component: HostComponent;
   let fixture: ComponentFixture<HostComponent>
