@@ -6,6 +6,7 @@ import { ProductComponent } from '../product/product.component';
 
 import { ProductsComponent } from './products.component';
 import { ValueService } from '../../services/value.service';
+import { By } from '@angular/platform-browser';
 
 fdescribe('ProductsComponent', () => {
   let component: ProductsComponent;
@@ -77,12 +78,13 @@ fdescribe('ProductsComponent', () => {
       expect(component.status).toEqual('success');
     }))
 
-    it('should change the estatus "Loading" => "Error"', fakeAsync(() => {
+    it('should change the estatus "Loading" => "Error" when btn-products was clicked', fakeAsync(() => {
       //Arrange
       productService.getAll.and.returnValue(defer(() => Promise.reject('error')))
+      const btnDebug = fixture.debugElement.query(By.css('.btn-products'))
       //Act
 
-      component.getAllProducts();
+      btnDebug.triggerEventHandler('click', null);
       fixture.detectChanges();
       expect(component.status).toEqual('loading');
       tick(3000); //Ejecuta todo lo que esta pendiente en resolverse, como tenemos timeout tenemos que explicarle que tiene espera
@@ -111,6 +113,25 @@ fdescribe('ProductsComponent', () => {
       expect(valueService.getPromiseValue).toHaveBeenCalled();
 
     })
+
+    it('should show "My mock string" in <p> when btn was clicked', fakeAsync( () => {
+
+      //Arrange
+      const mockMsg = 'My mock string';
+      valueService.getPromiseValue.and.returnValue(Promise.resolve(mockMsg));
+      const btnDebug = fixture.debugElement.query(By.css('.btn-promise'))
+      //Act
+
+      btnDebug.triggerEventHandler('click', null);
+      tick();
+      fixture.detectChanges();
+      const rtaDe = fixture.debugElement.query(By.css('p.rta'))
+      //assert
+      expect(component.rta).toEqual(mockMsg);
+      expect(valueService.getPromiseValue).toHaveBeenCalled();
+      expect(rtaDe.nativeElement.textContent).toEqual(mockMsg)
+
+    }))
 
   })
 
